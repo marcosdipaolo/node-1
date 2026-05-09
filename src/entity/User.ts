@@ -6,9 +6,9 @@ export class User {
   id!: string;
 
   @Index({ unique: true })
-  @Column()
+  @Column('varchar', { name: 'email' })
   email!: string;
 
-  @Column()
+  @Column('varchar', { name: 'name' })
   name!: string;
 }

@@ -1,16 +1,24 @@
 {
   "compilerOptions": {
-    "lib": ["es5", "es6", "dom"],
+    "target": "ES2022",
+
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+
+    "lib": ["ES2022"],
+
+    "strict": true,
+
     "esModuleInterop": true,
-    "allowJs": true,
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "ignoreDeprecations": "6.0",
+
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+
     "skipLibCheck": true,
+
     "outDir": "./dist",
     "rootDir": "./src",
+
     "types": ["node"]
   },
   "include": ["src/**/*"],
