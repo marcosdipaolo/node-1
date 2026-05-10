@@ -66,16 +66,28 @@ describe('unit | userService', () => {
   });
 
   it('creates a user', async () => {
-    const userData = { email: 'new@example.com', name: 'New User' } as Omit<
-      User,
-      'id'
-    >;
-    const savedUser: User = { id: '123', ...userData };
+    const userData = {
+      email: 'new@example.com',
+      name: 'New User',
+      password: 'password123',
+    };
+    const savedUser: User = {
+      id: '123',
+      ...userData,
+      role: 'user',
+    };
     mockRepository.save.mockResolvedValue(savedUser);
 
     const result = await userService.createUser(userData);
 
     expect(result).toEqual(savedUser);
-    expect(mockRepository.save).toHaveBeenCalledWith(userData);
+    expect(mockRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({
+        email: 'new@example.com',
+        name: 'New User',
+        role: 'user',
+        password: expect.any(String),
+      }),
+    );
   });
 });

@@ -60,9 +60,19 @@ describe('feature | /users', () => {
     const userPayload = {
       name: 'Test User',
       email: 'test@example.com',
+      password: 'Passw0rd!',
     };
-    const createdUser = { id: '123', ...userPayload };
-    mockService.createUser.mockResolvedValue(createdUser);
+    const createdUser = {
+      id: '123',
+      name: userPayload.name,
+      email: userPayload.email,
+      role: 'user',
+    };
+    mockService.createUser.mockResolvedValue({
+      id: '123',
+      ...userPayload,
+      role: 'user',
+    });
 
     const response = await request(app).post('/users').send(userPayload);
 

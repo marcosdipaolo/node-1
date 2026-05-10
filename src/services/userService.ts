@@ -1,5 +1,10 @@
-import { User } from '../entity/User';
+import bcrypt from 'bcryptjs';
+import { User, UserRole } from '../entity/User';
 import { userRepository } from '../repositories/userRepository';
+
+export type CreateUserData = Omit<User, 'id' | 'role'> & {
+  role?: UserRole;
+};
 
 const userService = {
   getUsers: async (): Promise<User[]> => {
@@ -14,8 +19,13 @@ const userService = {
     const user = await userRepository.findByEmail(email);
     return user || null;
   },
-  createUser: async (userData: Omit<User, 'id'>): Promise<User> => {
-    const newUser = await userRepository.save(userData);
+  createUser: async (userData: CreateUserData): Promise<User> => {
+    const hashedPassword = await bcrypt.hash(userData.password, 10);
+    const newUser = await userRepository.save({
+      ...userData,
+      password: hashedPassword,
+      role: userData.role ?? 'user',
+    });
     return newUser;
   },
 };

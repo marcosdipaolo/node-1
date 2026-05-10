@@ -2,14 +2,21 @@ import { Request, Response } from 'express';
 import { User } from '../../entity/User';
 import userService from '../../services/userService';
 
+type PublicUser = Omit<User, 'password'>;
+
+const sanitizeUser = (user: User): PublicUser => {
+  const { password, ...rest } = user;
+  return rest;
+};
+
 const userController = {
-  index: async (req: Request, res: Response<User[]>) => {
+  index: async (req: Request, res: Response<PublicUser[]>) => {
     const users = await userService.getUsers();
-    res.status(200).json(users);
+    res.status(200).json(users.map(sanitizeUser));
   },
   show: async (
     req: Request<{ id: string }>,
-    res: Response<User | { message: string }>,
+    res: Response<PublicUser | { message: string }>,
   ) => {
     const userId = req.params.id;
     if (!userId) {
@@ -18,33 +25,36 @@ const userController = {
     const user = await userService.getUserById(userId);
 
     if (user) {
-      res.json(user);
+      res.json(sanitizeUser(user));
     } else {
       res.status(404).json({ message: 'User not found' });
     }
   },
   showByEmail: async (
     req: Request<{ email: string }>,
-    res: Response<User | { message: string }>,
+    res: Response<PublicUser | { message: string }>,
   ) => {
     const email = req.params.email;
     const user = await userService.getUserByEmail(email);
 
     if (user) {
-      return res.json(user);
+      return res.json(sanitizeUser(user));
     }
 
     return res.status(404).json({ message: 'User not found' });
   },
   store: async (
     req: Request,
-    res: Response<{ message: string; user: User }>,
+    res: Response<{ message: string; user: PublicUser }>,
   ) => {
     const userData = req.body;
     const newUser = await userService.createUser(userData);
     res
       .status(201)
-      .json({ message: 'User created successfully', user: newUser });
+      .json({
+        message: 'User created successfully',
+        user: sanitizeUser(newUser),
+      });
   },
 };
 
