@@ -43,19 +43,6 @@ const userController = {
 
     return res.status(404).json({ message: 'User not found' });
   },
-  store: async (
-    req: Request,
-    res: Response<{ message: string; user: PublicUser }>,
-  ) => {
-    const userData = req.body;
-    const newUser = await userService.createUser(userData);
-    res
-      .status(201)
-      .json({
-        message: 'User created successfully',
-        user: sanitizeUser(newUser),
-      });
-  },
 };
 
 export default userController;

@@ -12,6 +12,7 @@
     "test:feature": "vitest run --testNamePattern feature",
     "typeorm-dev": "node --import tsx ./node_modules/typeorm/cli.js -d src/data-source.ts",
     "typeorm-dist": "typeorm -d dist/data-source.js",
+    "migration:generate:dev": "pnpm typeorm-dev migration:generate",
     "migration:run:dev": "pnpm typeorm-dev migration:run",
     "migration:revert:dev": "pnpm typeorm-dev migration:revert",
     "migration:run": "pnpm typeorm-dist migration:run",
@@ -38,6 +39,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@types/bcryptjs": "^2.4.6",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.3",
     "@types/morgan": "^1.9.10",

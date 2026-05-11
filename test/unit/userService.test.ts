@@ -23,8 +23,8 @@ describe('unit | userService', () => {
 
   it('returns all users', async () => {
     const users: User[] = [
-      { id: '1', email: 'first@example.com', name: 'First' },
-      { id: '2', email: 'second@example.com', name: 'Second' },
+      { id: '1', email: 'first@example.com', name: 'First', password: "password", role: 'user' },
+      { id: '2', email: 'second@example.com', name: 'Second', password: "password", role: 'user' },
     ];
 
     mockRepository.find.mockResolvedValue(users);
@@ -36,7 +36,7 @@ describe('unit | userService', () => {
   });
 
   it('returns a user by id', async () => {
-    const user: User = { id: '1', email: 'first@example.com', name: 'First' };
+    const user: User = { id: '1', email: 'first@example.com', name: 'First', password: "password", role: 'user' };
     mockRepository.findOneBy.mockResolvedValue(user);
 
     const result = await userService.getUserById('1');
@@ -54,7 +54,7 @@ describe('unit | userService', () => {
   });
 
   it('returns a user by email', async () => {
-    const user: User = { id: '1', email: 'first@example.com', name: 'First' };
+    const user: User = { id: '1', email: 'first@example.com', name: 'First', password: "password", role: 'user' };
     mockRepository.findByEmail.mockResolvedValue(user);
 
     const result = await userService.getUserByEmail('first@example.com');

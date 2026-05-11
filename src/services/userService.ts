@@ -7,9 +7,8 @@ export type CreateUserData = Omit<User, 'id' | 'role'> & {
 };
 
 const userService = {
-  getUsers: async (): Promise<User[]> => {
-    const users = await userRepository.find();
-    return users;
+  getUsers: (): Promise<User[]> => {
+    return userRepository.find();
   },
   getUserById: async (id: string): Promise<User | null> => {
     const user = await userRepository.findOneBy({ id });
@@ -21,12 +20,11 @@ const userService = {
   },
   createUser: async (userData: CreateUserData): Promise<User> => {
     const hashedPassword = await bcrypt.hash(userData.password, 10);
-    const newUser = await userRepository.save({
+    return await userRepository.save({
       ...userData,
       password: hashedPassword,
       role: userData.role ?? 'user',
     });
-    return newUser;
   },
 };
 

@@ -1,14 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
+import { AuthTokenPayload } from '../../services/authService';
 import { UserRole } from '../../entity/User';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret-change-me';
-
-interface AuthTokenPayload {
-  userId: string;
-  email: string;
-  role: UserRole;
-}
 
 export interface AuthRequest extends Request {
   user?: AuthTokenPayload;
@@ -28,8 +23,7 @@ export const authenticate = (
   const token = authHeader.split(' ')[1];
 
   try {
-    const payload = jwt.verify(token, JWT_SECRET) as AuthTokenPayload;
-    req.user = payload;
+    req.user = jwt.verify(token, JWT_SECRET) as AuthTokenPayload;
     next();
   } catch (error) {
     return res.status(401).json({ message: 'Invalid or expired token' });

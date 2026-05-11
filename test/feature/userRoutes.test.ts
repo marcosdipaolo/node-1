@@ -1,12 +1,23 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import request from 'supertest';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET = 'secret-change-me';
+
+const userToken = jwt.sign(
+  { userId: 'user-1', email: 'user@example.com', role: 'user' },
+  JWT_SECRET,
+);
+const adminToken = jwt.sign(
+  { userId: 'admin-1', email: 'admin@example.com', role: 'admin' },
+  JWT_SECRET,
+);
 
 const { mockService } = vi.hoisted(() => ({
   mockService: {
     getUsers: vi.fn(),
     getUserById: vi.fn(),
     getUserByEmail: vi.fn(),
-    createUser: vi.fn(),
   },
 }));
 
@@ -28,15 +39,33 @@ describe('feature | /users', () => {
     ];
     mockService.getUsers.mockResolvedValue(users);
 
-    const response = await request(app).get('/users');
+    const response = await request(app)
+      .get('/users')
+      .set('Authorization', `Bearer ${adminToken}`);
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual(users);
     expect(mockService.getUsers).toHaveBeenCalled();
   });
 
+  it('returns 401 when listing users without a token', async () => {
+    const response = await request(app).get('/users');
+    expect(response.status).toBe(401);
+    expect(mockService.getUsers).not.toHaveBeenCalled();
+  });
+
+  it('returns 403 when listing users as a non-admin', async () => {
+    const response = await request(app)
+      .get('/users')
+      .set('Authorization', `Bearer ${userToken}`);
+    expect(response.status).toBe(403);
+    expect(mockService.getUsers).not.toHaveBeenCalled();
+  });
+
   it('returns 400 for invalid email on /users/email/:email', async () => {
-    const response = await request(app).get('/users/email/not-an-email');
+    const response = await request(app)
+      .get('/users/email/not-an-email')
+      .set('Authorization', `Bearer ${userToken}`);
 
     expect(response.status).toBe(400);
     expect(response.body).toHaveProperty('message', 'Validation failed');
@@ -47,7 +76,9 @@ describe('feature | /users', () => {
     const user = { id: '1', email: 'first@example.com', name: 'First' };
     mockService.getUserByEmail.mockResolvedValue(user);
 
-    const response = await request(app).get('/users/email/first@example.com');
+    const response = await request(app)
+      .get('/users/email/first@example.com')
+      .set('Authorization', `Bearer ${userToken}`);
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual(user);
@@ -56,41 +87,4 @@ describe('feature | /users', () => {
     );
   });
 
-  it('returns 201 when creating a valid user', async () => {
-    const userPayload = {
-      name: 'Test User',
-      email: 'test@example.com',
-      password: 'Passw0rd!',
-    };
-    const createdUser = {
-      id: '123',
-      name: userPayload.name,
-      email: userPayload.email,
-      role: 'user',
-    };
-    mockService.createUser.mockResolvedValue({
-      id: '123',
-      ...userPayload,
-      role: 'user',
-    });
-
-    const response = await request(app).post('/users').send(userPayload);
-
-    expect(response.status).toBe(201);
-    expect(response.body).toEqual({
-      message: 'User created successfully',
-      user: createdUser,
-    });
-    expect(mockService.createUser).toHaveBeenCalledWith(userPayload);
-  });
-
-  it('returns 400 when creating a user with invalid payload', async () => {
-    const response = await request(app)
-      .post('/users')
-      .send({ email: 'not-an-email' });
-
-    expect(response.status).toBe(400);
-    expect(response.body).toHaveProperty('message', 'Validation failed');
-    expect(mockService.createUser).not.toHaveBeenCalled();
-  });
 });

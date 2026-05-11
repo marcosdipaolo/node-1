@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
-import userService from './userService';
+import userService, { CreateUserData } from './userService';
 import { User, UserRole } from '../entity/User';
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret-change-me';
@@ -18,6 +18,26 @@ export type AuthResult = {
 };
 
 const authService = {
+  register: async (userData: CreateUserData): Promise<AuthResult> => {
+    const user = await userService.createUser(userData);
+
+    const token = jwt.sign(
+      { userId: user.id, email: user.email, role: user.role },
+      JWT_SECRET,
+      { expiresIn: JWT_EXPIRES_IN },
+    );
+
+    return {
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+      },
+    };
+  },
+
   login: async (
     email: string,
     password: string,
