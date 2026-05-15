@@ -6,7 +6,13 @@ import { authenticate, authorize } from '../middlewares/auth';
 
 const authRouter = Router();
 
-authRouter.post('/register', authenticate, authorize(['admin']), validate(createUserSchema), authController.register);
+authRouter.post(
+  '/register',
+  authenticate,
+  authorize(['admin']),
+  validate(createUserSchema),
+  authController.register
+);
 authRouter.post('/login', validate(loginSchema), authController.login);
 
 export default authRouter;

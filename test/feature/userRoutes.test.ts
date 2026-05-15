@@ -6,11 +6,11 @@ const JWT_SECRET = 'secret-change-me';
 
 const userToken = jwt.sign(
   { userId: 'user-1', email: 'user@example.com', role: 'user' },
-  JWT_SECRET,
+  JWT_SECRET
 );
 const adminToken = jwt.sign(
   { userId: 'admin-1', email: 'admin@example.com', role: 'admin' },
-  JWT_SECRET,
+  JWT_SECRET
 );
 
 const { mockService } = vi.hoisted(() => ({
@@ -39,9 +39,7 @@ describe('feature | /users', () => {
     ];
     mockService.getUsers.mockResolvedValue(users);
 
-    const response = await request(app)
-      .get('/users')
-      .set('Authorization', `Bearer ${adminToken}`);
+    const response = await request(app).get('/users').set('Authorization', `Bearer ${adminToken}`);
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual(users);
@@ -55,9 +53,7 @@ describe('feature | /users', () => {
   });
 
   it('returns 403 when listing users as a non-admin', async () => {
-    const response = await request(app)
-      .get('/users')
-      .set('Authorization', `Bearer ${userToken}`);
+    const response = await request(app).get('/users').set('Authorization', `Bearer ${userToken}`);
     expect(response.status).toBe(403);
     expect(mockService.getUsers).not.toHaveBeenCalled();
   });
@@ -82,9 +78,6 @@ describe('feature | /users', () => {
 
     expect(response.status).toBe(200);
     expect(response.body).toEqual(user);
-    expect(mockService.getUserByEmail).toHaveBeenCalledWith(
-      'first@example.com',
-    );
+    expect(mockService.getUserByEmail).toHaveBeenCalledWith('first@example.com');
   });
-
 });

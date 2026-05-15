@@ -9,11 +9,7 @@ export interface AuthRequest extends Request {
   user?: AuthTokenPayload;
 }
 
-export const authenticate = (
-  req: AuthRequest,
-  res: Response,
-  next: NextFunction,
-) => {
+export const authenticate = (req: AuthRequest, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader?.startsWith('Bearer ')) {
@@ -25,7 +21,7 @@ export const authenticate = (
   try {
     req.user = jwt.verify(token, JWT_SECRET) as AuthTokenPayload;
     next();
-  } catch (error) {
+  } catch {
     return res.status(401).json({ message: 'Invalid or expired token' });
   }
 };

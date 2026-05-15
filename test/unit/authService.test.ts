@@ -46,7 +46,12 @@ describe('unit | authService', () => {
 
       expect(result).toEqual({
         token: 'signed-token',
-        user: { id: '1', email: 'new@example.com', name: 'New User', role: 'user' },
+        user: {
+          id: '1',
+          email: 'new@example.com',
+          name: 'New User',
+          role: 'user',
+        },
       });
       expect(mockUserService.createUser).toHaveBeenCalledWith({
         email: 'new@example.com',
@@ -57,55 +62,60 @@ describe('unit | authService', () => {
   });
 
   describe('login', () => {
-  it('returns null when user is not found', async () => {
-    mockUserService.getUserByEmail.mockResolvedValue(null);
+    it('returns null when user is not found', async () => {
+      mockUserService.getUserByEmail.mockResolvedValue(null);
 
-    const result = await authService.login('missing@example.com', 'pass');
+      const result = await authService.login('missing@example.com', 'pass');
 
-    expect(result).toBeNull();
-    expect(mockBcryptCompare).not.toHaveBeenCalled();
-  });
-
-  it('returns null when password does not match', async () => {
-    const user: User = {
-      id: '1',
-      email: 'user@example.com',
-      name: 'User',
-      password: 'hashed',
-      role: 'user',
-    };
-    mockUserService.getUserByEmail.mockResolvedValue(user);
-    mockBcryptCompare.mockResolvedValue(false);
-
-    const result = await authService.login('user@example.com', 'wrong');
-
-    expect(result).toBeNull();
-    expect(mockJwtSign).not.toHaveBeenCalled();
-  });
-
-  it('returns token and user data when credentials are valid', async () => {
-    const user: User = {
-      id: '1',
-      email: 'user@example.com',
-      name: 'User',
-      password: 'hashed',
-      role: 'user',
-    };
-    mockUserService.getUserByEmail.mockResolvedValue(user);
-    mockBcryptCompare.mockResolvedValue(true);
-    mockJwtSign.mockReturnValue('signed-token');
-
-    const result = await authService.login('user@example.com', 'correct');
-
-    expect(result).toEqual({
-      token: 'signed-token',
-      user: { id: '1', email: 'user@example.com', name: 'User', role: 'user' },
+      expect(result).toBeNull();
+      expect(mockBcryptCompare).not.toHaveBeenCalled();
     });
-    expect(mockJwtSign).toHaveBeenCalledWith(
-      { userId: '1', email: 'user@example.com', role: 'user' },
-      expect.any(String),
-      expect.objectContaining({ expiresIn: expect.any(String) }),
-    );
-  });
+
+    it('returns null when password does not match', async () => {
+      const user: User = {
+        id: '1',
+        email: 'user@example.com',
+        name: 'User',
+        password: 'hashed',
+        role: 'user',
+      };
+      mockUserService.getUserByEmail.mockResolvedValue(user);
+      mockBcryptCompare.mockResolvedValue(false);
+
+      const result = await authService.login('user@example.com', 'wrong');
+
+      expect(result).toBeNull();
+      expect(mockJwtSign).not.toHaveBeenCalled();
+    });
+
+    it('returns token and user data when credentials are valid', async () => {
+      const user: User = {
+        id: '1',
+        email: 'user@example.com',
+        name: 'User',
+        password: 'hashed',
+        role: 'user',
+      };
+      mockUserService.getUserByEmail.mockResolvedValue(user);
+      mockBcryptCompare.mockResolvedValue(true);
+      mockJwtSign.mockReturnValue('signed-token');
+
+      const result = await authService.login('user@example.com', 'correct');
+
+      expect(result).toEqual({
+        token: 'signed-token',
+        user: {
+          id: '1',
+          email: 'user@example.com',
+          name: 'User',
+          role: 'user',
+        },
+      });
+      expect(mockJwtSign).toHaveBeenCalledWith(
+        { userId: '1', email: 'user@example.com', role: 'user' },
+        expect.any(String),
+        expect.objectContaining({ expiresIn: expect.any(String) })
+      );
+    });
   });
 });

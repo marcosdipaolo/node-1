@@ -6,6 +6,8 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch src/index.ts",
+    "lint": "eslint . --ext .ts --fix",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"*.json\" \".vscode/**/*.json\"",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:unit": "vitest run --testNamePattern unit",
@@ -44,6 +46,8 @@
     "@types/jsonwebtoken": "^9.0.3",
     "@types/morgan": "^1.9.10",
     "@types/node": "^25.6.0",
+    "@typescript-eslint/eslint-plugin": "^8.59.3",
+    "@typescript-eslint/parser": "^8.59.3",
     "eslint": "^10.2.1",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.5",

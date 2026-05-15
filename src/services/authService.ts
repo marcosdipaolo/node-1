@@ -21,11 +21,9 @@ const authService = {
   register: async (userData: CreateUserData): Promise<AuthResult> => {
     const user = await userService.createUser(userData);
 
-    const token = jwt.sign(
-      { userId: user.id, email: user.email, role: user.role },
-      JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN },
-    );
+    const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, JWT_SECRET, {
+      expiresIn: JWT_EXPIRES_IN,
+    });
 
     return {
       token,
@@ -38,10 +36,7 @@ const authService = {
     };
   },
 
-  login: async (
-    email: string,
-    password: string,
-  ): Promise<AuthResult | null> => {
+  login: async (email: string, password: string): Promise<AuthResult | null> => {
     const user = await userService.getUserByEmail(email);
     if (!user) {
       return null;
@@ -52,11 +47,9 @@ const authService = {
       return null;
     }
 
-    const token = jwt.sign(
-      { userId: user.id, email: user.email, role: user.role },
-      JWT_SECRET,
-      { expiresIn: JWT_EXPIRES_IN },
-    );
+    const token = jwt.sign({ userId: user.id, email: user.email, role: user.role }, JWT_SECRET, {
+      expiresIn: JWT_EXPIRES_IN,
+    });
 
     return {
       token,

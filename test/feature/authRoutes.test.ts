@@ -5,7 +5,7 @@ import request from 'supertest';
 const adminToken = jwt.sign(
   { userId: 'admin-id', email: 'admin@example.com', role: 'admin' },
   process.env.JWT_SECRET || 'secret-change-me',
-  { expiresIn: '1h' },
+  { expiresIn: '1h' }
 );
 
 const { mockAuthService } = vi.hoisted(() => ({
@@ -85,10 +85,7 @@ describe('feature | /auth', () => {
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(authResult);
-      expect(mockAuthService.login).toHaveBeenCalledWith(
-        'user@example.com',
-        'password123',
-      );
+      expect(mockAuthService.login).toHaveBeenCalledWith('user@example.com', 'password123');
     });
 
     it('returns 401 when credentials are invalid', async () => {
@@ -103,9 +100,7 @@ describe('feature | /auth', () => {
     });
 
     it('returns 400 when email is missing', async () => {
-      const response = await request(app)
-        .post('/auth/login')
-        .send({ password: 'password123' });
+      const response = await request(app).post('/auth/login').send({ password: 'password123' });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('message', 'Validation failed');
@@ -123,9 +118,7 @@ describe('feature | /auth', () => {
     });
 
     it('returns 400 when password is missing', async () => {
-      const response = await request(app)
-        .post('/auth/login')
-        .send({ email: 'user@example.com' });
+      const response = await request(app).post('/auth/login').send({ email: 'user@example.com' });
 
       expect(response.status).toBe(400);
       expect(response.body).toHaveProperty('message', 'Validation failed');

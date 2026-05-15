@@ -12,7 +12,7 @@ userRouter.get(
   '/email/:email',
   authenticate,
   validate(getUserByEmailSchema),
-  userController.showByEmail,
+  userController.showByEmail
 );
 
 userRouter.get('/:id', authenticate, userController.show);
