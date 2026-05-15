@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsx watch src/index.ts",
-    "lint": "eslint . --ext .ts --fix",
+    "lint": "eslint . --ext .ts --ignore-pattern dist/** --fix",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\" \"*.json\" \".vscode/**/*.json\"",
     "test": "vitest run",
     "test:watch": "vitest",

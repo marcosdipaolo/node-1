@@ -4,11 +4,11 @@ import tsParser from '@typescript-eslint/parser';
 
 export default [
   {
+    files: ['src/**/*.{ts,tsx}', 'test/**/*.{ts,tsx}', 'vitest.config.ts', 'eslint.config.mjs'],
     ignores: ['node_modules/**', 'dist/**'],
-  },
-  js.configs.recommended,
-  {
+    ...js.configs.recommended,
     languageOptions: {
+      ...js.configs.recommended.languageOptions,
       parser: tsParser,
       parserOptions: {
         project: './tsconfig.eslint.json',
@@ -24,9 +24,11 @@ export default [
       },
     },
     plugins: {
+      ...js.configs.recommended.plugins,
       prettier,
     },
     rules: {
+      ...js.configs.recommended.rules,
       'prettier/prettier': 'error',
     },
   },
